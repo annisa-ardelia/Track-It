@@ -1,0 +1,35 @@
+create table user_database(
+    username varchar(255) not null unique primary key,
+    password varchar(255) not null check (password ~ '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$'),
+    nickname varchar(15) not null,
+    avatar INTEGER NOT NULL REFERENCES user_avatar(id),
+    level int default 1,
+    point int default 0,
+    level_up_point int  
+);
+create table user_avatar(
+    id serial not null unique primary key,
+    image varchar(255) not null
+);
+CREATE TYPE task_status AS ENUM ('completed', 'in-progress', 'done', 'overdue');
+CREATE TYPE task_priority AS ENUM ('Urgent', 'Standard', 'Relax');
+create table user_task(
+    id SERIAL PRIMARY KEY UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL REFERENCES user_database(username),
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50) NOT NULL CHECK (category IN ('Study', 'Grocery', 'Other')),
+    status task_status NOT NULL,
+    deadline varchar(255),
+    priority task_priority NOT NULL,
+    note varchar(255)
+);
+create table pet(
+    id serial not null unique primary key,
+    name varchar(255) not null unique,
+    pet_avatar varchar(255) NOT NULL,
+    minimum_level integer not null
+);
+CREATE TABLE pet_owner (
+    username VARCHAR(255) NOT NULL REFERENCES user_database(username),
+    pet_id INTEGER NOT NULL REFERENCES pet(id)
+);
