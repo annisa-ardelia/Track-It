@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { login } from "../actions/user.action";
 import { Card, CardContent, Typography, TextField, Button } from "@mui/material";
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         const response = await login(username, password);
             if (response.success) {
