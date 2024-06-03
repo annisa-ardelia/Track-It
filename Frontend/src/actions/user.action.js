@@ -16,8 +16,8 @@ export const signup = async (username, email, password) => {
         });
         return baseApiResponse(response.data, true);
     } catch (error) {
-        console.error("Singup failed!:", error);
-        return baseApiResponse(error.response.data, false);
+        console.error("Signup failed!:", error);
+        return baseApiResponse(error.response ? error.response.data : error.message, false);
     }
 }
 
@@ -31,6 +31,6 @@ export const login = async (username, password) => {
         return baseApiResponse(response.data, true);
     } catch (error) {
         console.error("Login failed!:", error);
-        return baseApiResponse(error.response.data, false);
+        return baseApiResponse(error.response ? error.response.data : error.message, false);
     }
 }

@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { signup } from "../actions/user.action";
 import { Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         const response = await signup(username, email, password);
-        if (response.sucess) {
+        if (response.success) {
             alert("Registration successful!");
+            navigate("/login");
         } else {
-            alert("Registration failed!");
+            alert(`Registration failed: ${response.data}`);
         }
     };
 

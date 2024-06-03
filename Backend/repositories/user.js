@@ -1,10 +1,11 @@
 const { pool } = require("../config/db.config.js");
 const { v4: uuidv4 } = require('uuid');
 
+// Fungsi untuk login
 exports.login = async function (req, res) {
     const { username, password } = req.body;
     try {
-        const result = await pool.query("SELECT * FROM account WHERE username = $1", [username]);
+        const result = await pool.query("SELECT * FROM user_database WHERE username = $1", [username]);
 
         if (result.rows.length === 0) {
             return res.status(404).send("Username tidak ditemukan");
@@ -23,11 +24,12 @@ exports.login = async function (req, res) {
     }
 };
 
+// Fungsi untuk signup
 exports.signup = async function (req, res) {
     const { username, email, password } = req.body;
     try {
         const userCheck = await pool.query(
-            'SELECT * FROM account WHERE username = $1 OR email = $2',
+            'SELECT * FROM user_database WHERE username = $1 OR email = $2',
             [username, email]
         );
 
@@ -36,7 +38,7 @@ exports.signup = async function (req, res) {
         }
 
         await pool.query(
-            "INSERT INTO account (user_id, username, email, password) VALUES ($1, $2, $3, $4)",
+            "INSERT INTO user_database (user_id, username, email, password) VALUES ($1, $2, $3, $4)",
             [uuidv4(), username, email, password]
         );
         res.status(201).send("Sukses signup");
