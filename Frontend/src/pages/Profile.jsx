@@ -1,31 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
-import { profile } from "../actions/user.action";
+import { getNick } from "../actions/user.action";
 
 
 const Profile = () => {
-    const [nickname, setNickname] = useState("");
+    const [nickname, setNickname] = useState([]);
 
     useEffect(() => {
-        const savedUsername = localStorage.getItem("username");
-        if (savedUsername) {
-            fetchProfile(savedUsername);
-        }
-    }, []);
-
-    const fetchProfile = async (username) => {
-        try {
-            const response = await profile(username);
-            if (response.ok) {
-                const data = await response.json();
-                setNickname(data.nickname);  // Correctly handle JSON response
-            } else {
-                console.error("Failed to fetch profile data.");
-            }
-        } catch (err) {
-            console.error("Failed to fetch profile data:", err);
-        }
-    };
+        const fetchInitialData = async () => {
+          try {
+            const username = localStorage.getItem("username");
+            const nicknameData = await getNick(username);
+            setNickname(nicknameData.nickname); 
+          } catch (error) {
+            console.error("Error fetching initial data:", error);
+          }
+        };
+    
+        fetchInitialData();
+      }, []);
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

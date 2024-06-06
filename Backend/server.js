@@ -21,7 +21,8 @@ app.use('/note', NoteRoutes);
 //users
 app.post("/login", userController.login);
 app.post("/signup", userController.signup);
-app.post("/profile", userController.profile);
+app.post("/nickname", userController.getNick);
+app.post("/levelup", userController.incrementLevel);
 //Tasks
 app.post("/addT", taskController.addTask);
 app.post("/getT", taskController.getTask);

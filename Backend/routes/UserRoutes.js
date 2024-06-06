@@ -37,8 +37,13 @@ router.post(
 );
 
 router.post(
-    "/profile",
-    userController.profile
+    "/nickname",
+    userController.getNick
 );
+
+router.post(
+    "/levelup",
+    userController.incrementLevel
+)
 
 module.exports = router;

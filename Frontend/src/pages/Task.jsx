@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTask, addTask, delTask } from "../actions/user.action";
+import { getTask, addTask, delTask, getNick } from "../actions/user.action";
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
+  const [nickname, setNickname] = useState("");
   const [newTask, setNewTask] = useState({
     username: "",
     name: "",
@@ -19,8 +20,11 @@ const App = () => {
   useEffect(() => {
     const fetchInitialTasks = async () => {
       try {
-        const taskData = await getTask("Rifqi ");
+        const username = localStorage.getItem("username");
+        const taskData = await getTask(username);
         setTasks(taskData);
+        const nicknameData = await getNick(username); //get nickname
+        setNickname(nicknameData.nickname);
       } catch (error) {
         console.error("Error fetching initial tasks:", error);
       }
@@ -94,12 +98,12 @@ const App = () => {
             Home
           </Button>
           <span>{today}</span>
-          <span>Good Morning Anisa</span>
+          <span>Hello {nickname} </span>
         </div>
       </nav>
       <div style={styles.container}>
         <div style={styles.taskContainer}>
-          <h2>Tasks for Rifqi</h2>
+          <h2>Tasks for {nickname} </h2>
           {tasks.length === 0 ? (
             <p>No tasks found. Let's add some!</p>
           ) : (

@@ -1,6 +1,7 @@
 const { pool } = require("../config/db.config.js");
 const { v4: uuidv4 } = require('uuid');
 
+
 exports.login = async function (req, res) {
     const { username, password } = req.body;
     try {
@@ -15,7 +16,7 @@ exports.login = async function (req, res) {
         if (password !== storedPassword) {
             return res.status(401).send("Password salah");
         }
-            
+
         res.status(200).send("Login berhasil");
     } catch (error) {
         console.error(error);
@@ -25,11 +26,8 @@ exports.login = async function (req, res) {
 
 // Fungsi untuk signup
 exports.signup = async function (req, res) {
-    const { username, nickname, password } = req.body;
+    const { username, nickname, password, avatar } = req.body;
     try {
-        // Log untuk memeriksa data input
-        console.log("Received data:", { username, nickname, password });
-
         const userCheck = await pool.query(
             'SELECT * FROM user_database WHERE username = $1 OR nickname = $2',
             [username, nickname]
@@ -40,33 +38,55 @@ exports.signup = async function (req, res) {
         }
 
         await pool.query(
-            "INSERT INTO user_database (username, nickname, password) VALUES ($1, $2, $3)",
-            [username, nickname, password]
+            "INSERT INTO user_database (username, nickname, password, avatar) VALUES ($1, $2, $3, $4)",
+            [ username, nickname, password, avatar]
         );
-
         res.status(201).send("Sukses signup");
     } catch (error) {
-        console.error("Error during signup:", error);
+        console.log(error);
         res.status(500).send("Internal Server Error");
     }
 };
 
-
-exports.profile = async function (req, res) {
-    const { username } = req.body;  // Changed from req.body to req.query
+exports.getNick = async function (req, res){ //function for get nickname, check UserRoutes
+    const {username} = req.body;
     try {
-        console.log("Received username:", username);
+        const Nick = await pool.query('SELECT nickname FROM user_database WHERE username = $1', [username]);
+        
+        if (Nick.rowCount === 0) {
+            res.json({ nickname: username });
+        } else {
+            res.json({ nickname: Nick.rows[0].nickname });
+        }
+    } catch (error) {
+        // Handle the error
+        console.error(error);
+        res.status(500).json({ error: 'Error retrieving nickname' });
+    }
+}
 
-        const result = await pool.query("SELECT nickname FROM user_database WHERE username = $1", [username]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: "User not found" });
+exports.incrementLevel = async function (req, res) {
+    const { username } = req.body;
+    try {
+        // Get current user data
+        const userResult = await pool.query('SELECT * FROM user_database WHERE username = $1', [username]);
+        if (userResult.rows.length === 0) {
+            return res.status(404).send("Username not found");
         }
 
-        const userProfile = result.rows[0];
-        res.status(200).json(userProfile);  // Send JSON response
+        const user = userResult.rows[0];
+
+        const newLevel = user.level + 1;
+        
+        // Update user level, reset points, and update points needed
+        await pool.query(
+            'UPDATE user_database SET level = $1 WHERE username = $2',
+            [newLevel, username]
+        );
+
+        return res.status(200).send("User level incremented successfully");
     } catch (error) {
-        console.error("Error fetching user profile:", error);
-        res.status(500).json({ error: "Internal Server Error" });  // Send JSON response
+        console.error(error);
+        res.status(500).send("Internal Server Error");
     }
 };

@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "/components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
-import { getTask } from "../actions/user.action";
+import { getTask , getNick} from "../actions/user.action";
 import { Button, Card, CardContent, MenuItem, Select, Typography } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
+  const [nickname, setNickname] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchInitialTasks = async () => {
       try {
-        const taskData = await getTask("Rifqi ");
+        const username = localStorage.getItem("username");
+        const taskData = await getTask(username);
         setTasks(taskData);
+
+        const nicknameData = await getNick(username);
+        setNickname(nicknameData.nickname);
       } catch (error) {
         console.error("Error fetching initial tasks:", error);
       }
@@ -32,7 +37,7 @@ const App = () => {
       <Navbar /> {/* Add Navbar here */}
       <div style={styles.container}>
         <div style={styles.taskContainer}>
-          <h2>Tasks for Rifqi</h2>
+          <h2>Tasks for {nickname}</h2>
           <Card style={styles.card}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>

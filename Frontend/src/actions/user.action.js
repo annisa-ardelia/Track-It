@@ -7,11 +7,11 @@ const baseApiResponse = (data, isSuccess) => {
     }
 }
 
-export const signup = async (username, nickname, password) => {
+export const signup = async (username, email, password) => {
     try{
         const response = await axios.post('http://localhost:5413/user/signup', {
             username: username,
-            nickname: nickname,
+            email: email,
             password: password
         });
         return baseApiResponse(response.data, true);
@@ -68,14 +68,12 @@ export const getTask = async (username) => {
     }
   }
 
-  export const profile = async (username) => {
+  export const getNick = async (username) =>{ //this get nickname. from backend ( check user.js)
     try {
-      const response = await axios.post('http://localhost:5413/user/profile', {
-        username: username
-      });
-      return baseApiResponse(response.data, true);
+          const res = await axios.post('http://localhost:5413/user/nickname', {username: username});
+          return res.data
     } catch (error) {
-      console.error('Error fetching profile:', error);
-      return baseApiResponse(error.response ? error.response.data : error.message, false);
+      console.error('Error deleting task:', error);
+      throw error; 
     }
-  };
+  }
