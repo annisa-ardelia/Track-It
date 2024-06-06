@@ -12,6 +12,7 @@ const Login = () => {
         e.preventDefault();
         const response = await login(username, password);
         if (response.success) {
+            localStorage.setItem("username", username);
             alert("Login successful!");
             navigate("/home"); // Redirect to Home page
         } else {

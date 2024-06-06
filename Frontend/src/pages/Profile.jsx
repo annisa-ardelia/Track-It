@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
+import { profile } from "../actions/user.action";
+
 
 const Profile = () => {
-    const [username, setUsername] = useState("");
+    const [nickname, setNickname] = useState("");
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await fetch(`/user/profile?username=${username}`);
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    setUsername(data.username);
-                } else {
-                    console.error("Failed to fetch profile data.");
-                }
-            } catch (err) {
-                console.error("Failed to fetch profile data:", err);
-            }
-        };
-    
-        // Fetch profile only when the component mounts or when the username changes
-        if (username.trim() !== "") {
-            fetchProfile();
+        const savedUsername = localStorage.getItem("username");
+        if (savedUsername) {
+            fetchProfile(savedUsername);
         }
-    }, [username]);
-    
+    }, []);
+
+    const fetchProfile = async (username) => {
+        try {
+            const response = await profile(username);
+            if (response.ok) {
+                const data = await response.json();
+                setNickname(data.nickname);  // Correctly handle JSON response
+            } else {
+                console.error("Failed to fetch profile data.");
+            }
+        } catch (err) {
+            console.error("Failed to fetch profile data:", err);
+        }
+    };
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -34,9 +34,9 @@ const Profile = () => {
                     <Typography variant="h5" gutterBottom>
                         Profile
                     </Typography>
-                    {username && (
+                    {nickname && (
                         <div style={{ marginTop: '20px' }}>
-                            <Typography variant="h6">Username: {username}</Typography>
+                            <Typography variant="h6">Nickname: {nickname}</Typography>
                         </div>
                     )}
                 </CardContent>

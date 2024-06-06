@@ -15,7 +15,7 @@ exports.login = async function (req, res) {
         if (password !== storedPassword) {
             return res.status(401).send("Password salah");
         }
-
+            
         res.status(200).send("Login berhasil");
     } catch (error) {
         console.error(error);
@@ -53,21 +53,20 @@ exports.signup = async function (req, res) {
 
 
 exports.profile = async function (req, res) {
-    const { username } = req.body;
+    const { username } = req.body;  // Changed from req.body to req.query
     try {
-        // Log untuk memeriksa data input
         console.log("Received username:", username);
 
-        const result = await pool.query("SELECT username FROM user_database WHERE username = $1", [username]);
+        const result = await pool.query("SELECT nickname FROM user_database WHERE username = $1", [username]);
 
         if (result.rows.length === 0) {
-            return res.status(404).send("User not found");
+            return res.status(404).json({ error: "User not found" });
         }
 
         const userProfile = result.rows[0];
-        res.status(200).json(userProfile);
+        res.status(200).json(userProfile);  // Send JSON response
     } catch (error) {
         console.error("Error fetching user profile:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error: "Internal Server Error" });  // Send JSON response
     }
 };
