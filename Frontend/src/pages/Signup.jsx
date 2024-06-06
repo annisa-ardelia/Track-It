@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [nickname, setNickname] = useState("");
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const response = await signup(username, email, password);
+        const response = await signup(username, nickname, password);
         if (response.success) {
             alert("Registration successful!");
             navigate("/login");
@@ -28,10 +28,10 @@ const Signup = () => {
                         Register
                     </Typography>
                     <TextField
-                        type="email"
-                        label="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        type="nickname"
+                        label="Nickname"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
                         fullWidth
                         margin="normal"
                     />
