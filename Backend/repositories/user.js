@@ -65,22 +65,59 @@ exports.getNick = async function (req, res){ //function for get nickname, check 
     }
 }
 
+exports.getPoint = async function (req, res){
+    const {username} = req.body;
+    try {
+        const Point = await pool.query('select point from user_database where username = $1', [username]);
+        if (Point.rows.length === 0) {
+            return res.status(404).json({ error: "Username don't exist not found"});
+        }
+        res.json(result.rows[0].point);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error retrieving point' });
+    }
+}
+
+exports.updatePoint = async function (req, res){
+    const {username} = req.body;
+
+    try {
+        const AddPoint = await pool.query("select * from user_task where username = $1 and status = 'Done;", [username]);
+        const point = 0;
+    } catch (error) {
+        
+    }
+    
+}
+
+exports.getLevel = async function (req, res){
+    const {username} = req.body;
+    try {
+        const Point = await pool.query('select level from user_database where username = $1', [username]);
+        if (Point.rows.length === 0) {
+            return res.status(404).json({ error: "Username don't exist not found"});
+        }
+        res.json(result.rows[0].level);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error retrieving point' });
+    }
+}
+
 exports.incrementLevel = async function (req, res) {
     const { username } = req.body;
     try {
         // Get current user data
-        const userResult = await pool.query('SELECT * FROM user_database WHERE username = $1', [username]);
+        const userResult = await pool.query('select * from user_database where username = $1', [username]);
         if (userResult.rows.length === 0) {
             return res.status(404).send("Username not found");
         }
 
-        const user = userResult.rows[0];
-
-        const newLevel = user.level + 1;
-        
+        const user = userResult.rows[0];        
         // Update user level, reset points, and update points needed
         await pool.query(
-            'UPDATE user_database SET level = $1 WHERE username = $2',
+            'update user_database set level = $1 where username = $2',
             [newLevel, username]
         );
 
@@ -89,4 +126,4 @@ exports.incrementLevel = async function (req, res) {
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
-};
+}

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTask, addTask, delTask, getNick } from "../actions/user.action";
+import { getTask, addTask, delTask, updateT, doneT, startT } from "../actions/user.action";
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
-  const [nickname, setNickname] = useState("");
   const [newTask, setNewTask] = useState({
     username: "",
     name: "",
     category: "",
-    status: "In-progress", // Set default status
+    status: "", // Set default status
     deadline: "",
     priority: "Standard",
     note: ""
@@ -23,10 +22,9 @@ const App = () => {
         const username = localStorage.getItem("username");
         const taskData = await getTask(username);
         setTasks(taskData);
-        const nicknameData = await getNick(username); //get nickname
-        setNickname(nicknameData.nickname);
+        handleDeadline(taskData, username);
       } catch (error) {
-        console.error("Error fetching initial tasks:", error);
+        console.error("Error Getting Task", error);
       }
     };
 
@@ -35,11 +33,12 @@ const App = () => {
 
   const handleFetchTasks = async () => {
     try {
-      const loggedInUser = localStorage.getItem("loggedInUser"); // Retrieve username from local storage
+      const loggedInUser = localStorage.getItem("username"); // Retrieve username from local storage
       const taskData = await getTask(loggedInUser); // Fetch tasks specific to the logged-in user
       setTasks(taskData);
+      handleDeadline(taskData, loggedInUser);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error Getting Task", error);
     }
   };
 
@@ -52,7 +51,7 @@ const App = () => {
         username: "",
         name: "",
         category: "",
-        status: "In-progress", // Reset status to default after adding task
+        status: "", // Reset status to default after adding task
         deadline: "",
         priority: "Standard",
         note: ""
@@ -66,10 +65,40 @@ const App = () => {
     try {
       await delTask({ name: taskName });
       await handleFetchTasks();
-    } catch (error) {
+      setNewTask({
+        username: "",
+        name: "",
+        category: "",
+        status: "", // Reset status to default after adding task
+        deadline: "",
+        priority: "Standard",
+        note: ""
+      });   
+     } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
+
+  const handleDoneTask = async (taskName) => {
+    try {
+      const username = localStorage.getItem("username");
+      await doneT(username, taskName);
+      await handleFetchTasks();
+    } catch (error) {
+      console.error("Error Finishing Task", error);
+    }
+  };
+
+  const handlestartTask = async(taskName) => {
+    try {
+      const username = localStorage.getItem("username");
+      await startT(username, taskName);
+      await handleFetchTasks();
+    } catch (error) {
+      console.error("Error Starting Task", error);
+
+    }
+  }
 
   const Reload = () => {
     window.location.reload();
@@ -79,13 +108,27 @@ const App = () => {
     await handleAddTask(e);
     Reload();
   };
+
   const HandlebackHome = () => {
     navigate("/Home");
   };
+  const HandleNotes = () => {
+    navigate("/NoteHome");
+  }
 
   const DelthenReload = async (e) => {
     await handleDeleteTask(e);
-    handleFetchTasks;
+    await handleFetchTasks();
+  };
+
+  const handleDeadline = async (taskData, username) => {
+    const today = new Date();
+    taskData.forEach(async (task) => {
+      const deadline = new Date(task.deadline);
+      if (deadline < today) {
+        await updateT(username, task.name);
+      }
+    });
   };
 
   const today = new Date().toLocaleDateString();
@@ -98,12 +141,12 @@ const App = () => {
             Home
           </Button>
           <span>{today}</span>
-          <span>Hello {nickname} </span>
+          <span>Good Morning Anisa</span>
         </div>
       </nav>
       <div style={styles.container}>
         <div style={styles.taskContainer}>
-          <h2>Tasks for {nickname} </h2>
+          <h2>Tasks for Rifqi</h2>
           {tasks.length === 0 ? (
             <p>No tasks found. Let's add some!</p>
           ) : (
@@ -111,13 +154,13 @@ const App = () => {
               <div key={task.id} style={styles.taskCard}>
                 <h3>{task.name}</h3>
                 <p>Category: {task.category}</p>
-                <p>Status: {task.status}</p>
+                <p>Status: {task.status === "Completed" ? "Idle" : task.status}</p>                
                 <p>Deadline: {task.deadline}</p>
                 <p>Priority: {task.priority}</p>
                 <p>Note: {task.note}</p>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  color="error"
                   onClick={() => handleDeleteTask(task.name)}
                   style={styles.deleteButton}
                 >
@@ -127,11 +170,28 @@ const App = () => {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick = {HandleNotes}
                     style={styles.notesButton}
                   >
                     Notes
                   </Button>
                 )}
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => handleDoneTask(task.name)}
+                  style={styles.doneButton}
+                >
+                  Done
+                </Button>
+                <Button
+                  variant="contained"
+                  color="inherit"
+                  onClick={() => handlestartTask(task.name)}
+                  style={styles.startButton}
+                >
+                  Start
+                </Button>
               </div>
             ))
           )}
@@ -145,7 +205,6 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, username: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           />
           <TextField
             type="text"
@@ -154,7 +213,6 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           />
           <TextField
             type="text"
@@ -163,7 +221,6 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           />
           <Select // Use Select for dropdown menu
             label="Status"
@@ -171,12 +228,9 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           >
-            <MenuItem value="Completed">Completed</MenuItem>
+            <MenuItem value="Completed">Idle</MenuItem>
             <MenuItem value="In-progress">In-progress</MenuItem>
-            <MenuItem value="Done">Done</MenuItem>
-            <MenuItem value="Overdue">Overdue</MenuItem>
           </Select>
           <TextField
             type="date"
@@ -185,7 +239,6 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           />
           <Select // Use Select for dropdown menu
             label="Priority"
@@ -193,7 +246,6 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
             style={styles.input}
             fullWidth
-            margin="normal"
           >
             <MenuItem value="Urgent">Urgent</MenuItem>
             <MenuItem value="Standard">Standard</MenuItem>
@@ -205,13 +257,13 @@ const App = () => {
             onChange={(e) => setNewTask({ ...newTask, note: e.target.value })}
             style={styles.textarea}
             fullWidth
-            margin="normal"
             multiline
             rows={4}
           />
           <Button variant="contained" onClick={AddthenReload} fullWidth style={styles.button}>
             Add Task
           </Button>
+
         </div>
       </div>
     </div>
@@ -227,6 +279,7 @@ const styles = {
     width: "100vw",
     margin: "0",
     padding: "0",
+    overflow: "hidden", // Ensure the whole app doesn't overflow
   },
   navbar: {
     backgroundColor: "#282c34",
@@ -238,6 +291,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
   },
   homeButton: {
     position: "absolute",
@@ -248,13 +302,14 @@ const styles = {
     flexDirection: "row",
     flex: "1",
     padding: "2rem",
-    overflow: "hidden",
+    overflow: "hidden", // Ensure the container doesn't overflow
   },
   taskContainer: {
     flex: "2",
     padding: "1rem",
-    overflowY: "auto",
+    overflowY: "auto", // Allow vertical scrolling
     borderRight: "1px solid #ccc",
+    height: "100%",
   },
   taskCard: {
     border: "1px solid #ccc",
@@ -272,9 +327,21 @@ const styles = {
     top: "3rem",
     right: "1rem",
   },
+  doneButton: {
+    position: "absolute",
+    top: "5rem",
+    right: "1rem",
+  },
+  startButton: {
+    position: "absolute",
+    top: "7rem",
+    right: "1rem",
+  },
   addTaskForm: {
     flex: "1",
     padding: "1rem",
+    overflowY: "auto", // Allow vertical scrolling
+    height: "100%",
   },
   input: {
     display: "block",

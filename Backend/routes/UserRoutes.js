@@ -42,8 +42,13 @@ router.post(
 );
 
 router.post(
-    "/levelup",
+    "/levUp",
     userController.incrementLevel
+)
+
+router.post(
+    "/point",
+    userController.getPoint
 )
 
 module.exports = router;
