@@ -4,7 +4,7 @@ Track It! merupakan proyek
 <br />
 <div align="center">
   <a href="![TrackIt](https://github.com/SistemBasisData2024/Track-It/assets/119683308/fef7f32b-f0d8-499e-b54e-fbeb1e2ad4b7)">
-    <img src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/fef7f32b-f0d8-499e-b54e-fbeb1e2ad4b7" alt="TrackIt" width="80" height="80">
+    <img src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/fef7f32b-f0d8-499e-b54e-fbeb1e2ad4b7" alt="TrackIt" width="200">
   <h3 align="center">Track It!</h3>
 </div>
 
