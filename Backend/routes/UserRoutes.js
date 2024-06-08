@@ -51,4 +51,13 @@ router.post(
     userController.getPoint
 )
 
+router.post(
+    "/updatePoint",
+    userController.updatePoint
+)
+
+router.post(
+    "/getPoint",
+    userController.getPoint
+)
 module.exports = router;

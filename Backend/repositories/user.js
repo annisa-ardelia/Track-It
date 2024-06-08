@@ -72,24 +72,68 @@ exports.getPoint = async function (req, res){
         if (Point.rows.length === 0) {
             return res.status(404).json({ error: "Username don't exist not found"});
         }
-        res.json(result.rows[0].point);
+        res.json(Point.rows[0].point);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error retrieving point' });
     }
 }
 
-exports.updatePoint = async function (req, res){
-    const {username} = req.body;
+exports.updatePoint = async function (req, res) {
+    const { username } = req.body;
 
     try {
-        const AddPoint = await pool.query("select * from user_task where username = $1 and status = 'Done;", [username]);
-        const point = 0;
-    } catch (error) {
+        // Retrieve current points of the user
+        const userResult = await pool.query("SELECT point FROM user_database WHERE username = $1", [username]);
         
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ error: "Username not found" });
+        }
+
+        let totalPoints = userResult.rows[0].point;
+        console.log(`Current points for ${username}: ${totalPoints}`);
+
+        // Retrieve completed tasks that haven't been counted yet
+        const taskResult = await pool.query("SELECT id, priority FROM user_task WHERE username = $1 AND status = 'Done' AND is_counted = FALSE", [username]);
+        
+        if (taskResult.rows.length === 0) {
+            return res.status(404).json({ error: "No uncounted completed tasks found for the user" });
+        }
+
+        // Calculate additional points based on task priorities
+        const taskIds = [];
+        taskResult.rows.forEach(task => {
+            console.log(`Task priority: ${task.priority}`);
+            switch(task.priority) {
+                case 'Urgent':
+                    totalPoints += 3;
+                    break;
+                case 'Standard':
+                    totalPoints += 2;
+                    break;
+                case 'Relax':
+                    totalPoints += 1;
+                    break;
+                default:
+                    break;
+            }
+            taskIds.push(task.id);
+        });
+
+        console.log(`New total points for ${username}: ${totalPoints}`);
+
+        // Update user's points in the user_database table
+        await pool.query("UPDATE user_database SET point = $1 WHERE username = $2", [totalPoints, username]);
+
+        // Mark tasks as counted
+        await pool.query("UPDATE user_task SET is_counted = TRUE WHERE id = ANY($1::int[])", [taskIds]);
+
+        res.status(200).send("User points updated successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
     }
-    
-}
+};
 
 exports.getLevel = async function (req, res){
     const {username} = req.body;
