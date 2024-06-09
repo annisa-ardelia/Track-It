@@ -1,7 +1,7 @@
 const { pool } = require("../config/db.config.js");
 const { v4: uuidv4 } = require('uuid');
 
-
+//Add a new notes function
 exports.addNotes = async function (req, res){
     const {name, username, text} = req.body;
 
@@ -19,9 +19,9 @@ exports.addNotes = async function (req, res){
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
-}
+};
 
-//get all Notes Function
+//Get all notes function
 exports.getNotes = async function (req, res){
     const {username} = req.body;
 
@@ -37,4 +37,22 @@ exports.getNotes = async function (req, res){
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
-}
+};
+
+//Get a specific note by id
+exports.getNotesSpecific = async function (req, res){
+    const {username, id } = req.body;
+
+    try {
+        const AllNotes = await pool.query("SELECT * from user_notes notes where username = $1 AND id = $2 ", [username, id ]);
+        /*if (AllNotes.rows.length == 0){
+            return res.json(Allnotes.rows);
+
+        }*/ //In FrontEnd, Implement to check The Notes
+        res.json(AllNotes.rows);
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+};

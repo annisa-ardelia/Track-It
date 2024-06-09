@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTask, addTask, delTask, updateT, doneT, startT } from "../actions/user.action";
+import { getTask, addTask, delTask, updateT, doneT, startT } from "../actions/task.action";
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
-    username: "",
     name: "",
     category: "",
     status: "", // Set default status
@@ -42,13 +41,13 @@ const App = () => {
     }
   };
 
-  const handleAddTask = async (e) => {
-    e.preventDefault();
+  const handleAddTask = async () => {
     try {
-      await addTask(newTask);
+      const username = localStorage.getItem("username");
+      const taskWithUsername = { ...newTask, username };
+      await addTask(taskWithUsername);
       await handleFetchTasks();
       setNewTask({
-        username: "",
         name: "",
         category: "",
         status: "", // Reset status to default after adding task
@@ -66,7 +65,6 @@ const App = () => {
       await delTask({ name: taskName });
       await handleFetchTasks();
       setNewTask({
-        username: "",
         name: "",
         category: "",
         status: "", // Reset status to default after adding task
@@ -74,7 +72,7 @@ const App = () => {
         priority: "Standard",
         note: ""
       });   
-     } catch (error) {
+    } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
@@ -104,20 +102,21 @@ const App = () => {
     window.location.reload();
   };
 
-  const AddthenReload = async (e) => {
-    await handleAddTask(e);
+  const AddthenReload = async () => {
+    await handleAddTask();
     Reload();
   };
 
   const HandlebackHome = () => {
     navigate("/Home");
   };
+
   const HandleNotes = () => {
     navigate("/NoteHome");
-  }
+  };
 
-  const DelthenReload = async (e) => {
-    await handleDeleteTask(e);
+  const DelthenReload = async (taskName) => {
+    await handleDeleteTask(taskName);
     await handleFetchTasks();
   };
 
@@ -166,11 +165,11 @@ const App = () => {
                 >
                   Delete
                 </Button>
-                {task.category === "Study" && (
+                {task.category === "Study" && task.status !== "Done" && task.status !== "Overdue" && (
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick = {HandleNotes}
+                    onClick={HandleNotes}
                     style={styles.notesButton}
                   >
                     Notes
@@ -198,14 +197,6 @@ const App = () => {
         </div>
         <div style={styles.addTaskForm}>
           <h2>Add New Task</h2>
-          <TextField
-            type="text"
-            placeholder="Username"
-            value={newTask.username}
-            onChange={(e) => setNewTask({ ...newTask, username: e.target.value })}
-            style={styles.input}
-            fullWidth
-          />
           <TextField
             type="text"
             placeholder="Name"
@@ -241,33 +232,33 @@ const App = () => {
             fullWidth
           />
           <Select // Use Select for dropdown menu
-            label="Priority"
-            value={newTask.priority}
-            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-            style={styles.input}
-            fullWidth
-          >
-            <MenuItem value="Urgent">Urgent</MenuItem>
-            <MenuItem value="Standard">Standard</MenuItem>
-            <MenuItem value="Relax">Relax</MenuItem>
-          </Select>
-          <TextField
-            placeholder="Note"
-            value={newTask.note}
-            onChange={(e) => setNewTask({ ...newTask, note: e.target.value })}
-            style={styles.textarea}
-            fullWidth
-            multiline
-            rows={4}
-          />
-          <Button variant="contained" onClick={AddthenReload} fullWidth style={styles.button}>
-            Add Task
-          </Button>
-
-        </div>
-      </div>
-    </div>
-  );
+           
+           label="Priority"
+           value={newTask.priority}
+           onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+           style={styles.input}
+           fullWidth
+         >
+           <MenuItem value="Urgent">Urgent</MenuItem>
+           <MenuItem value="Standard">Standard</MenuItem>
+           <MenuItem value="Relax">Relax</MenuItem>
+         </Select>
+         <TextField
+           placeholder="Note"
+           value={newTask.note}
+           onChange={(e) => setNewTask({ ...newTask, note: e.target.value })}
+           style={styles.textarea}
+           fullWidth
+           multiline
+           rows={4}
+         />
+         <Button variant="contained" onClick={AddthenReload} fullWidth style={styles.button}>
+           Add Task
+         </Button>
+       </div>
+     </div>
+   </div>
+ );
 };
 
 const styles = {

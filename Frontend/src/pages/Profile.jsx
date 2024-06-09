@@ -1,24 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { getNick } from "../actions/user.action";
+import { Card, CardContent, Typography, Avatar } from '@mui/material';
+import { profile, getLevel, getPoint } from "../actions/user.action";
+import userImageMapping from "../images/user.images";
 
 
 const Profile = () => {
-    const [nickname, setNickname] = useState([]);
-
-    useEffect(() => {
-        const fetchInitialData = async () => {
-          try {
-            const username = localStorage.getItem("username");
-            const nicknameData = await getNick(username);
-            setNickname(nicknameData.nickname); 
-          } catch (error) {
-            console.error("Error fetching initial data:", error);
-          }
-        };
+    const [user, setUser] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     
-        fetchInitialData();
-      }, []);
+    useEffect(() => {
+        const fetchAvatar = async () => {
+            const username = localStorage.getItem("username");
+        
+            const apiResponse = await profile(username);
+                if (apiResponse.success) {
+                setUser(apiResponse.data);
+                } else {
+                setError("Failed to fetch avatar");
+                }
+                setLoading(false);
+            };
+        
+            fetchAvatar();
+        }, []);
+
+        if (loading) {
+            return <div>Loading...</div>;
+        }
+    
+        if (error) {
+            return <div>{error}</div>;
+        }
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -27,9 +40,14 @@ const Profile = () => {
                     <Typography variant="h5" gutterBottom>
                         Profile
                     </Typography>
-                    {nickname && (
+                    <Avatar
+                        src={userImageMapping[user.avatar]}
+                        alt={user.username}
+                        style={{ width: 100, height: 100, margin: '20px auto' }}
+                    />
+                    {user.nickname && (
                         <div style={{ marginTop: '20px' }}>
-                            <Typography variant="h6">Nickname: {nickname}</Typography>
+                            <Typography variant="h6">Nickname: {user.nickname}</Typography>
                         </div>
                     )}
                 </CardContent>

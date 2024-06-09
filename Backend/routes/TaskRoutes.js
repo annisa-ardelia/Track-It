@@ -1,6 +1,6 @@
 const express = require('express');
 const send = express.Router();
-const TaskController = require("../repositories/task.js");
+const TaskController = require("../repositories/repository.task.js");
 
 send.post("/addT", TaskController.addTask);
 send.post("/getT", TaskController.getTask);

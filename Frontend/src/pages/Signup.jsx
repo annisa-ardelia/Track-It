@@ -1,23 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signup } from "../actions/user.action";
+import { avatar } from "../actions/avatar.action";
 import { Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import userImageMapping from "../images/user.images";
 
 const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [avatarList, setAvatarList] = useState([]);
+    const [avatarParam, setAvatarParam] = useState("");
+    const [selectedAvatar, setSelectedAvatar] = useState("female1");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchAvatar = async () => {
+            const apiResponse = await avatar();
+            if (apiResponse.success) {
+                setAvatarList(apiResponse.data);
+            } else {
+                setError("Failed to fetch avatar");
+            }
+            setLoading(false);
+        };
+
+        fetchAvatar();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const response = await signup(username, nickname, password);
+        const response = await signup(username, nickname, password, avatarParam);
         if (response.success) {
             alert("Registration successful!");
             navigate("/login");
         } else {
             alert(`Registration failed: ${response.data}`);
         }
+    };
+    
+    const handleAvatarClick = (avatar) => {
+        setSelectedAvatar(avatar.image);
+        setAvatarParam(avatar.id);
     };
 
     return (
@@ -27,6 +61,25 @@ const Signup = () => {
                     <Typography variant="h5" gutterBottom>
                         Register
                     </Typography>
+                    <Typography variant="h7">Select Your Avatar</Typography>
+                        <div className="avatars" style={{ display: "flex", flexWrap: "wrap" }}>
+                            {avatarList.map((avatar, index) => (
+                                <img
+                                    key={index}
+                                    src={userImageMapping[avatar.image]}
+                                    alt={avatar.id}
+                                    style={{
+                                        border: selectedAvatar === avatar.image ? '2px solid blue' : '2px solid transparent',
+                                        cursor: 'pointer',
+                                        margin: '5px',
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '50%'
+                                    }}
+                                    onClick={() => handleAvatarClick(avatar)}
+                                />
+                            ))}
+                        </div>
                     <TextField
                         type="nickname"
                         label="Nickname"

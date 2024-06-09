@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import axios from 'axios';
+import { Button, Typography, Card, CardContent, AppBar, Toolbar } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { getNote } from '../actions/note.action';
 
-const Notes = () => {
+const NoteWrite = () => {
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const username = localStorage.getItem('username'); // Assuming username is stored in localStorage
-        const response = await axios.post('/api/getNotes', { username });
-        setNotes(response.data);
+        const username = localStorage.getItem('username');
+        if (!username) {
+          setError('Username not found in localStorage');
+          return;
+        }
+        const userNotes = await getNote(username);
+        setNotes(userNotes);
       } catch (error) {
         console.error('Error fetching notes:', error);
         setError('Error fetching notes');
@@ -22,18 +27,30 @@ const Notes = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
-      {error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        notes.map((note) => (
-          <Card key={note.id} style={styles.card}>
-            <CardContent>
-              <Typography variant="h6">{note.name}</Typography>
-            </CardContent>
-          </Card>
-        ))
-      )}
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/Home">
+            Home
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <div style={styles.container}>
+        {error ? (
+          <Typography color="error">{error}</Typography>
+        ) : (
+          <div style={styles.notesContainer}>
+            {notes.map((note) => (
+              <Card key={note.id} style={styles.card}>
+                <CardContent>
+                  <Typography variant="h6" noWrap>{note.name}</Typography>
+                  <Typography style={styles.noteText}>{note.notes}</Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -44,18 +61,23 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '20px',
-    height: '100vh',
-    width: '100vw',
-    overflow: 'auto',
+  },
+  notesContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   card: {
     width: '300px',
     margin: '10px',
     padding: '10px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: 'auto',
+  },
+  noteText: {
+    whiteSpace: 'pre-line',
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word',
   },
 };
 
-export default Notes;
+export default NoteWrite;

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { getTask, getNick } from "../actions/user.action";
+import Navbar from "../components/Navbar.jsx";
+import { useNavigate } from "react-router-dom";
+import { getNick, getLevel } from "../actions/user.action";
+import { getTask } from "../actions/task.action";
+import { getNote } from "../actions/note.action";
 import { myNewestPet } from "../actions/pet.action";
-import petImageMapping from "../actions/pet.images";
-import Navbar from "/components/Navbar";
+import petImageMapping from "../images/pet.images";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
+  const [level, setLevel] = useState([]);
   const [nickname, setNickname] = useState("");
   const [newestPet, setNewestPet] = useState([]);
+  const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -18,8 +22,12 @@ const App = () => {
     const fetchInitialData = async () => {
       try {
         const username = localStorage.getItem("username");
+
         const taskData = await getTask(username);
         setTasks(taskData);
+
+        const levelData = await getLevel(username);
+        setLevel(levelData.level);
 
         const nicknameData = await getNick(username);
         setNickname(nicknameData.nickname);
@@ -30,6 +38,10 @@ const App = () => {
         } else {
           setError("Failed to fetch my newest pet");
         }
+
+        const noteResponse = await getNote(username);
+        setNotes(noteResponse);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching initial data:", error);
@@ -44,12 +56,13 @@ const App = () => {
     navigate("/Task");
   };
 
-  const handleLinkClick = () => {
-    const username = localStorage.getItem("username");
-    localStorage.setItem('username', username);
+  const handleViewPet = () => {
+    navigate("/Pet");
   };
 
-  const today = new Date().toLocaleDateString();
+  const handleViewNoteWrite = () => {
+    navigate("/NoteWrite");
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -63,37 +76,27 @@ const App = () => {
     <div style={styles.app}>
       <Navbar /> {/* Add Navbar here */}
       <div style={styles.container}>
-        <div style={styles.taskContainer}>
-          <h2>Tasks for {nickname}</h2>
-          <Card style={styles.card}>
+        <div style={styles.cardContainer}>
+          <Card style={{ ...styles.card, ...styles.taskCard }}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>
-                Recent Tasks
+                Tasks for {level}
               </Typography>
               {tasks.length > 0 ? (
                 <div>
-                  <div style={styles.task}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {tasks[0].name}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Category: {tasks[0].category}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Status: {tasks[0].status === "Completed" ? "idle" : tasks[0].status}
-                    </Typography>
-                  </div>
-                  <div style={styles.task}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {tasks[1].name}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Category: {tasks[1].category}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Status: {tasks[1].status === "Completed" ? "idle" : tasks[1].status}
-                    </Typography>
-                  </div>
+                  {tasks.slice(0, 2).map((task) => (
+                    <div key={task.id} style={styles.task}>
+                      <Typography variant="subtitle1" gutterBottom>
+                        {task.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        Category: {task.category}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        Status: {task.status === "Completed" ? "idle" : task.status}
+                      </Typography>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <Typography variant="body2" color="textSecondary" component="p">
@@ -105,7 +108,7 @@ const App = () => {
               </Button>
             </CardContent>
           </Card>
-          <Card style={styles.card}>
+          <Card style={{ ...styles.card, ...styles.petCard }}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>
                 My Newest Pet
@@ -120,11 +123,9 @@ const App = () => {
                     <Typography variant="body2" color="textSecondary" component="p">
                       Obtained at level {pet.minimum_level}
                     </Typography>
-                    <Link to={`/myPets`} onClick={handleLinkClick}>
-                      <Button variant="contained" color="primary">
-                        See my other pets
-                      </Button>
-                    </Link>
+                    <Button variant="contained" color="primary" onClick={handleViewPet}>
+                      See my other pets
+                    </Button>
                   </div>
                 ))
               ) : (
@@ -132,6 +133,29 @@ const App = () => {
                   No pets found.
                 </Typography>
               )}
+            </CardContent>
+          </Card>
+          <Card style={{ ...styles.card, ...styles.noteCard }}>
+            <CardContent>
+              <Typography variant="h5" component="h2" gutterBottom>
+                Notes
+              </Typography>
+              {notes.length > 0 ? (
+                notes.slice(0, 2).map((note) => (
+                  <div key={note.id} style={styles.note}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      {note.name}
+                    </Typography>
+                  </div>
+                ))
+              ) : (
+                <Typography variant="body2" color="textSecondary" component="p">
+                  No notes found.
+                </Typography>
+              )}
+              <Button onClick={handleViewNoteWrite} variant="contained" color="primary">
+                View All Notes
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -155,21 +179,47 @@ const styles = {
     flexDirection: "row",
     flex: "1",
     padding: "2rem",
-    paddingTop: "64px", // Adjusted padding to account for navbar height
     overflow: "hidden",
+    paddingTop: "90px",
   },
-  taskContainer: {
-    flex: "2",
-    padding: "1rem",
-    overflowY: "auto",
-    borderRight: "1px solid #ccc",
+  cardContainer: {
+    display: "flex",
+    flex: "1",
+    justifyContent: "space-between",
   },
   card: {
-    marginBottom: "1rem",
+    flex: "1",
     padding: "1rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  taskCard: {
+    marginRight: "1rem",
+  },
+  petCard: {    flex: "1",
+    marginRight: "1rem",
+  },
+  noteCard: {
+    flex: "1",
+    marginLeft: "1rem",
   },
   task: {
     marginBottom: "0.5rem",
+  },
+  pet: {
+    marginBottom: "0.5rem",
+    textAlign: "center",
+  },
+  petImage: {
+    height: "100px",
+    marginBottom: "0.5rem",
+  },
+  note: {
+    marginBottom: "0.5rem",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    padding: "1rem",
   },
 };
 

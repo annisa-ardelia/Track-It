@@ -1,43 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { getNote } from '../actions/user.action';
+import React, { useState } from 'react';
+import { TextField, Button, Typography } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import { addNote } from '../actions/note.action';
 
-const Notes = () => {
-  const [notes, setNotes] = useState([]);
+const NoteMakingPage = () => {
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
   const [error, setError] = useState(null);
+  const  Navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const username = localStorage.getItem('username'); // Assuming username is stored in localStorage
-        if (!username) {
-          setError('Username not found in localStorage');
-          return;
-        }
-        const response = await getNote(username);
-        setNotes(response);
-      } catch (error) {
-        console.error('Error fetching notes:', error);
-        setError('Error fetching notes');
+  const handleAddNote = async () => {
+    try {
+      const username = localStorage.getItem('username');
+      if (!username) {
+        setError('Username not found in localStorage');
+        return;
       }
-    };
-
-    fetchNotes();
-  }, []);
+      await addNote(name, username, text);
+      Navigate("/NoteWrite");
+      // Optionally, you can redirect the user to another page after adding the note
+    } catch (error) {
+      console.error('Error adding note:', error);
+      setError('Error adding note');
+    }
+  };
 
   return (
     <div style={styles.container}>
-      {error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        notes.map((note) => (
-          <Card key={note.id} style={styles.card}>
-            <CardContent>
-              <Typography variant="h6">{note.name}</Typography>
-            </CardContent>
-          </Card>
-        ))
-      )}
+      <Typography variant="h4">Create a New Note</Typography>
+      <TextField
+        label="Note Name"
+        variant="outlined"
+        fullWidth
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        style={styles.input}
+      />
+      <TextField
+        label="Note Content"
+        variant="outlined"
+        multiline
+        rows={10}
+        fullWidth
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        style={styles.input}
+      />
+      <Button variant="contained" onClick={handleAddNote} style={styles.button}>
+        Add Note
+      </Button>
+      {error && <Typography color="error">{error}</Typography>}
     </div>
   );
 };
@@ -48,18 +60,13 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '20px',
-    height: '100vh',
-    width: '100vw',
-    overflow: 'auto',
   },
-  card: {
-    width: '300px',
-    margin: '10px',
-    padding: '10px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+  input: {
+    margin: '10px 0',
+  },
+  button: {
+    marginTop: '20px',
   },
 };
 
-export default Notes;
+export default NoteMakingPage;

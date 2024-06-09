@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
-const userController = require("../repositories/user.js");
+const userController = require("../repositories/repository.user.js");
 
 router.post(
     "/login",
@@ -36,28 +36,10 @@ router.post(
     userController.signup
 );
 
-router.post(
-    "/nickname",
-    userController.getNick
-);
-
-router.post(
-    "/levUp",
-    userController.incrementLevel
-)
-
-router.post(
-    "/point",
-    userController.getPoint
-)
-
-router.post(
-    "/updatePoint",
-    userController.updatePoint
-)
-
-router.post(
-    "/getPoint",
-    userController.getPoint
-)
+router.post("/nickname", userController.getNick);
+router.post("/point", userController.getPoint);
+router.post("/levUp", userController.incrementLevel);
+router.post("/profile", userController.profile);
+router.post("/updatePoint", userController.updatePoint);
+router.post("/getLevel", userController.getLevel);
 module.exports = router;
