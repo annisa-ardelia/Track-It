@@ -54,9 +54,6 @@ git clone https://github.com/SistemBasisData2024/Track-It
 
 ## Frontend
 - Open the right terminal:
-```
-git clone https://github.com/SistemBasisData2024/Track-It
-```
 - Run npm install to install all dependencies
 ```
 npm install
