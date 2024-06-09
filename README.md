@@ -39,7 +39,8 @@ Track It! merupakan sebuah proyek yang mengimplementasikan manajemen task atau t
  ![Flowchart](https://github.com/SistemBasisData2024/Track-It/assets/119683308/a2cd6510-19c3-4bd6-b978-0d6ee131ac34)
 
 # ERD
-![ERD](https://github.com/SistemBasisData2024/Track-It/assets/119683308/fceed56e-368e-4176-8b44-f3fc1bf295da)
+![ERD drawio](https://github.com/SistemBasisData2024/Track-It/assets/119683308/4d9cffe5-340b-41c9-98b7-e89022e43487)
+
 
 # UML
 ![SBDD-Page-5 drawio](https://github.com/SistemBasisData2024/Track-It/assets/119683308/55a1f212-4cc3-4b84-b6ac-e1a6d5637fb0)
