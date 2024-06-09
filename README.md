@@ -5,9 +5,10 @@
     <img src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/02c744f3-c468-43cc-b14d-bae3430cce0e" alt="TrackIt" width="400">
 </div>
 Track It! merupakan sebuah proyek yang mengimplementasikan manajemen task atau to-do list yang interaktif dan seru. Website ini membawa unsur permainan ke dalam aktivitas harian dengan memungkinkan user untuk memiliki pet yang didapat dari kenaikan level setiap kali menyelesaikan task. Proyek ini dibagi menjadi tiga komponen penting yaitu user, pet, dan task.
-- **User :** Bertanggung jawab dalam membuat dan menyelesaikan task. User menggunakan Track It! dengan cara membuat akun, menambahkan task, dan menandai task sebagai 'Done' ketika selesai.
-- **Pet :** Merupakan gamification element di mana setiap user bisa memiliki pet virtual. Pet ini bisa di dapat setiap kali user menaikkan levelnya.
-- **Task :** Tugas yang dibuat user dan memiliki fitur untuk memberikan notes. Tugas bisa ditandai dengan memasukkan kategori yang dipilih dan deadline yang ada.
+- **User:** Bertanggung jawab dalam membuat dan menyelesaikan task. User menggunakan Track It! dengan cara membuat akun, menambahkan task, dan menandai task sebagai 'Done' ketika selesai.
+- **Pet:** Merupakan gamification element di mana setiap user bisa memiliki pet virtual. Pet ini bisa didapat setiap kali user menaikkan levelnya.
+- **Task:** Tugas yang dibuat user dan memiliki fitur untuk memberikan notes. Tugas bisa ditandai dengan memasukkan kategori yang dipilih dan deadline yang ada.
+
 
 <details>
   <summary>Table of Contents</summary>
