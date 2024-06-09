@@ -5,6 +5,7 @@
     <img src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/02c744f3-c468-43cc-b14d-bae3430cce0e" alt="TrackIt" width="400">
 </div>
 Track It! merupakan sebuah proyek yang mengimplementasikan manajemen task atau to-do list yang interaktif dan seru. Website ini membawa unsur permainan ke dalam aktivitas harian dengan memungkinkan user untuk memiliki pet yang didapat dari kenaikan level setiap kali menyelesaikan task. Proyek ini dibagi menjadi tiga komponen penting yaitu user, pet, dan task.
+
 - **User:** Bertanggung jawab dalam membuat dan menyelesaikan task. User menggunakan Track It! dengan cara membuat akun, menambahkan task, dan menandai task sebagai 'Done' ketika selesai.
 - **Pet:** Merupakan gamification element di mana setiap user bisa memiliki pet virtual. Pet ini bisa didapat setiap kali user menaikkan levelnya.
 - **Task:** Tugas yang dibuat user dan memiliki fitur untuk memberikan notes. Tugas bisa ditandai dengan memasukkan kategori yang dipilih dan deadline yang ada.
@@ -29,7 +30,7 @@ Track It! merupakan sebuah proyek yang mengimplementasikan manajemen task atau t
 </details>
 
 # Tech Stack:
- ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)
+ ![Express.js](https://img.shields.io/badge/Express.js-%23404d59.svg?logo=express&logoColor=%2361DAFB) ![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white) ![React](https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB) ![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)
 
  # About The Project
  Track It! adalah to-do list dynamic yang di desain untuk mengerjakan taks menjadi efisien dan enjoyable. Dengan mengintegrasikan elemen game, Track It! sehingga user akan lebih produktif dan lebih terlibat lewat pet virtual dan leveling sistem.
@@ -71,6 +72,7 @@ npm install
 ```
 - Create an .env file in your project root folder and add your variables
 <img width="187" alt="ENV" src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/2b664da5-65b5-4064-95cf-c07c80a4cb70">
+
 - To test the installation result run
 ```
 npm run start
