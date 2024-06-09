@@ -1,3 +1,4 @@
+// Importing necessary libraries and tools
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import petImageMapping from "../images/pet.images";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 
 const App = () => {
+  // State variables 
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState("");
   const [newestPet, setNewestPet] = useState([]);
@@ -17,6 +19,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -44,27 +47,27 @@ const App = () => {
 
     fetchInitialData();
   }, []);
-
+  // Handle view tasks
   const handleViewTasks = () => {
     navigate("/Task");
   };
-
+  // Handle view pet
   const handleViewPet = () => {
     navigate("/Pet");
   };
-
+  // Handle view note write
   const handleViewNoteWrite = () => {
     navigate("/NoteWrite");
   };
-
+  // If loading, display "Loading..."
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  // If error, display error message
   if (error) {
     return <div>{error}</div>;
   }
-
+  // Render the App
   return (
     <div style={styles.app}>
       <Navbar />

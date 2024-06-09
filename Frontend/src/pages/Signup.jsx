@@ -1,3 +1,4 @@
+// Import necessary modules
 import React, { useState, useEffect } from "react";
 import { signup } from "../actions/user.action";
 import { avatar } from "../actions/avatar.action";
@@ -5,7 +6,9 @@ import { Card, CardContent, Typography, TextField, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom";
 import userImageMapping from "../images/user.images";
 
+// Signup component
 const Signup = () => {
+    // Declare necessary states
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
@@ -14,8 +17,10 @@ const Signup = () => {
     const [avatarList, setAvatarList] = useState([]);
     const [avatarParam, setAvatarParam] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState("female1");
+    // Use navigate hook
     const navigate = useNavigate();
 
+    // Fetch avatar data from backend
     useEffect(() => {
         const fetchAvatar = async () => {
             const apiResponse = await avatar();
@@ -29,15 +34,16 @@ const Signup = () => {
 
         fetchAvatar();
     }, []);
-
+    // If loading, display "Loading..."
     if (loading) {
         return <div>Loading...</div>;
     }
-
+    // If error, display error message
     if (error) {
         return <div>{error}</div>;
     }
 
+    // Handle register
     const handleRegister = async (e) => {
         e.preventDefault();
         const response = await signup(username, nickname, password, avatarParam);
@@ -48,12 +54,12 @@ const Signup = () => {
             alert(`Registration failed: ${response.data}`);
         }
     };
-    
+    // Handle avatar click
     const handleAvatarClick = (avatar) => {
         setSelectedAvatar(avatar.image);
         setAvatarParam(avatar.id);
     };
-
+    // Render the signup form
     return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
             <Card style={{ minWidth: 300 }}>

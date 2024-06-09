@@ -19,14 +19,13 @@ export const getTask = async (username) => {
   }
 };
 
-// Function to add a new task for a specific user
 export const addTask = async (taskData) => {
   try {
     const response = await axios.post('http://localhost:5413/task/addT', taskData);
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error('Error adding task:', error);
-    throw error; // Rethrow the error to handle it in the component
+    throw error; 
   }
 };
 

@@ -1,12 +1,24 @@
+// Import the pool instance from the database configuration file
 const { pool } = require("../config/db.config.js");
+// Import the uuid library for generating unique identifiers (not used in this code, but included for other parts of your application)
 const { v4: uuidv4 } = require('uuid');
 
-//User log in function
+/**
+ * User log in function.
+ * 
+ * This function handles an HTTP POST request for user login. It checks the username and password against the database.
+ * If the username is not found, it returns a 404 status code with an error message.
+ * If the password is incorrect, it returns a 401 status code with an error message.
+ * If both are correct, it returns a 200 status code with a success message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
 exports.login = async function (req, res) {
     const { username, password } = req.body;
 
     try {
-        const result = await pool.query("select * from user_database where username = $1", [username]);
+        const result = await pool.query("SELECT * FROM user_database WHERE username = $1", [username]);
 
         if (result.rows.length === 0) {
             return res.status(404).send("Username tidak ditemukan");
@@ -25,18 +37,23 @@ exports.login = async function (req, res) {
     }
 };
 
-// User sign up function
+/**
+ * User sign up function.
+ * 
+ * This function handles an HTTP POST request for user sign up. It checks if the username already exists in the database.
+ * If the username exists, it returns a 400 status code with an error message.
+ * If the username does not exist, it inserts the new user data into the database and returns a 201 status code with a success message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
 exports.signup = async function (req, res) {
     const { username, nickname, password, avatar } = req.body;
 
     try {
-        // Log untuk memeriksa data input
-        console.log("Received data:", { username, nickname, password, avatar});
+        console.log("Received data:", { username, nickname, password, avatar });
 
-        const userCheck = await pool.query(
-            'SELECT * FROM user_database WHERE username = $1',
-            [username]
-        );
+        const userCheck = await pool.query('SELECT * FROM user_database WHERE username = $1', [username]);
 
         if (userCheck.rows.length > 0) {
             return res.status(400).send("Username already exists");
@@ -54,32 +71,47 @@ exports.signup = async function (req, res) {
     }
 };
 
-//Get user nickname
-exports.getNick = async function (req, res){ //function for get nickname, check UserRoutes
-    const {username} = req.body;
+/**
+ * Get user nickname function.
+ * 
+ * This function handles an HTTP POST request to get the nickname of a user based on the username.
+ * If the username is found, it returns the nickname. If the username is not found, it returns the username as the nickname.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getNick = async function (req, res) {
+    const { username } = req.body;
 
     try {
-        const Nick = await pool.query('select nickname from user_database where username = $1', [username]);
-        
+        const Nick = await pool.query('SELECT nickname FROM user_database WHERE username = $1', [username]);
+
         if (Nick.rowCount === 0) {
             res.json({ nickname: username });
         } else {
             res.json({ nickname: Nick.rows[0].nickname });
         }
     } catch (error) {
-        // Handle the error
         console.error(error);
         res.status(500).json({ error: 'Error retrieving nickname' });
     }
 };
 
-//Get user points
-exports.getPoint = async function (req, res){
-    const {username} = req.body;
+/**
+ * Get user points function.
+ * 
+ * This function handles an HTTP POST request to get the points of a user based on the username.
+ * If the username is found, it returns the points. If the username is not found, it returns a 404 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getPoint = async function (req, res) {
+    const { username } = req.body;
     try {
-        const Point = await pool.query('select point from user_database where username = $1', [username]);
+        const Point = await pool.query('SELECT point FROM user_database WHERE username = $1', [username]);
         if (Point.rows.length === 0) {
-            return res.status(404).json({ error: "Username don't exist not found"});
+            return res.status(404).json({ error: "Username don't exist" });
         }
         res.json(Point.rows[0].point);
     } catch (error) {
@@ -88,14 +120,23 @@ exports.getPoint = async function (req, res){
     }
 };
 
-//Update user points
+/**
+ * Update user points function.
+ * 
+ * This function handles an HTTP POST request to update the points of a user based on the completed tasks.
+ * It retrieves the user's current points and completed tasks, calculates the new total points, updates the user's points in the database,
+ * and marks the tasks as counted. If successful, it returns a 200 status code with a success message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
 exports.updatePoint = async function (req, res) {
     const { username } = req.body;
 
     try {
         // Retrieve current points of the user
-        const userResult = await pool.query("select point from user_database where username = $1", [username]);
-        
+        const userResult = await pool.query("SELECT point FROM user_database WHERE username = $1", [username]);
+
         if (userResult.rows.length === 0) {
             return res.status(404).json({ error: "Username not found" });
         }
@@ -104,8 +145,8 @@ exports.updatePoint = async function (req, res) {
         console.log(`Current points for ${username}: ${totalPoints}`);
 
         // Retrieve completed tasks that haven't been counted yet
-        const taskResult = await pool.query("select id, priority from user_task where username = $1 and status = 'Done' and is_counted = FALSE", [username]);
-        
+        const taskResult = await pool.query("SELECT id, priority FROM user_task WHERE username = $1 AND status = 'Done' AND is_counted = FALSE", [username]);
+
         if (taskResult.rows.length === 0) {
             return res.status(404).json({ error: "No uncounted completed tasks found for the user" });
         }
@@ -114,7 +155,7 @@ exports.updatePoint = async function (req, res) {
         const taskIds = [];
         taskResult.rows.forEach(task => {
             console.log(`Task priority: ${task.priority}`);
-            switch(task.priority) {
+            switch (task.priority) {
                 case 'Urgent':
                     totalPoints += 3;
                     break;
@@ -133,10 +174,10 @@ exports.updatePoint = async function (req, res) {
         console.log(`New total points for ${username}: ${totalPoints}`);
 
         // Update user's points in the user_database table
-        await pool.query("update user_database set point = $1 where username = $2", [totalPoints, username]);
+        await pool.query("UPDATE user_database SET point = $1 WHERE username = $2", [totalPoints, username]);
 
         // Mark tasks as counted
-        await pool.query("update user_task SET is_counted = TRUE where id = ANY($1::int[])", [taskIds]);
+        await pool.query("UPDATE user_task SET is_counted = TRUE WHERE id = ANY($1::int[])", [taskIds]);
 
         res.status(200).send("User points updated successfully");
     } catch (error) {
@@ -145,29 +186,46 @@ exports.updatePoint = async function (req, res) {
     }
 };
 
-//Get user level
-exports.getLevel = async function (req, res){
-    const {username} = req.body;
+/**
+ * Get user level function.
+ * 
+ * This function handles an HTTP POST request to get the level of a user based on the username.
+ * If the username is found, it returns the level. If the username is not found, it returns a 404 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getLevel = async function (req, res) {
+    const { username } = req.body;
 
     try {
-        const Point = await pool.query('select level from user_database where username = $1', [username]);
+        const Point = await pool.query('SELECT level FROM user_database WHERE username = $1', [username]);
         if (Point.rows.length === 0) {
-            return res.status(404).json({ error: "Username don't exist not found"});
+            return res.status(404).json({ error: "Username don't exist" });
         }
         res.json(Point.rows[0].level);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error retrieving point' });
+        res.status(500).json({ error: 'Error retrieving level' });
     }
 };
 
-//Update user level by incrementing it
+/**
+ * Increment user level function.
+ * 
+ * This function handles an HTTP POST request to increment the level of a user based on their points.
+ * It checks if the user has enough points to level up. If so, it increments the level and updates the points accordingly.
+ * If successful, it returns a 200 status code with a success message. If not enough points, it returns a 200 status code with a message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
 exports.incrementLevel = async function (req, res) {
     const { username } = req.body;
 
     try {
         // Get current user data
-        const userResult = await pool.query('select * from user_database where username = $1', [username]);
+        const userResult = await pool.query('SELECT * FROM user_database WHERE username = $1', [username]);
         if (userResult.rows.length === 0) {
             return res.status(404).send("Username not found");
         }
@@ -185,7 +243,7 @@ exports.incrementLevel = async function (req, res) {
 
             // Update user level and points in the database
             await pool.query(
-                'update user_database set level = $1, point = $2 where username = $3',
+                'UPDATE user_database SET level = $1, point = $2 WHERE username = $3',
                 [newLevel, newPoints, username]
             );
 
@@ -199,7 +257,16 @@ exports.incrementLevel = async function (req, res) {
     }
 };
 
-//Get user profile 
+/**
+ * Get user profile function.
+ * 
+ * This function handles an HTTP POST request to get the profile of a user based on the username.
+ * It retrieves the user's profile data from the database, including username, password, nickname, avatar, level, point, and level_up_point.
+ * If the user is found, it returns the profile data. If the user is not found, it returns a 404 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
 exports.profile = async function (req, res) {
     const { username } = req.body;
 

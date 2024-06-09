@@ -1,21 +1,27 @@
+// Import necessary modules
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Card, CardContent, AppBar, Toolbar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { getNote } from '../actions/note.action';
 import Navbar from '../components/Navbar';
 
+// NoteWrite component
 const NoteWrite = () => {
+  // State variables to store notes and error
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState(null);
 
+  // Fetch notes data from backend
   useEffect(() => {
     const fetchNotes = async () => {
       try {
+        // Get username from localStorage
         const username = localStorage.getItem('username');
         if (!username) {
           setError('Username not found in localStorage');
           return;
         }
+        // Fetch notes data
         const userNotes = await getNote(username);
         setNotes(userNotes);
       } catch (error) {
@@ -29,7 +35,7 @@ const NoteWrite = () => {
 
   return (
     <div>
-      {/* Navbar */}
+      {           }
       <Navbar style={styles.navbar} />
       
       <div style={styles.container}>
@@ -52,9 +58,10 @@ const NoteWrite = () => {
   );
 };
 
+// Styles
 const styles = {
   navbar: {
-    paddingBottom: '1rem', // Adding padding to the bottom of the navbar
+    paddingBottom: '1rem', 
   },
   container: {
     paddingTop: "5rem",

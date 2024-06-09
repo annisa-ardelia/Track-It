@@ -1,3 +1,4 @@
+// Import necessary modules
 import React, { useState, useEffect } from "react";
 import { allPets, ownedPets } from "../actions/pet.action";
 import petImageMapping from "../images/pet.images";
@@ -5,13 +6,17 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
+// MyPets component
 const MyPets = () => {
+    // State variables to store all pets and my pets
     const [allPetsList, setAllPetsList] = useState([]);
     const [myPetsList, setMyPetsList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // Get username from localStorage
     const username = localStorage.getItem('username');
 
+    // Fetch all pets and my pets data from backend
     useEffect(() => {
         const fetchAllPets = async () => {
             const apiResponse = await allPets(username);
@@ -32,22 +37,22 @@ const MyPets = () => {
             }
             setLoading(false);
         };
-        
+        // Fetch all pets and my pets data
         Promise.all([fetchAllPets(), fetchMyPets()])
             .catch((error) => {
                 setError("Failed to fetch pets");
                 setLoading(false);
             });
     }, []);
-
+    // If loading, display "Loading..."
     if (loading) {
         return <div>Loading...</div>;
     }
-
+    // If error, display error message
     if (error) {
         return <div>{error}</div>;
     }
-
+    // Return the MyPets page
     return (
         <div style={styles.container}>
 
@@ -80,7 +85,7 @@ const MyPets = () => {
         </div>
     );
 };
-
+// Styles for the MyPets
 const styles = {
     container: {
         paddingTop: "4rem", },

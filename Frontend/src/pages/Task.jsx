@@ -1,25 +1,30 @@
+// Import necessary modules
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
+// Import necessary functions
 import { UpdateOwnedPet } from "../actions/pet.action";
 import { updatePoint, incrementLevel, profile } from "../actions/user.action";
 import { getTask, addTask, delTask, updateT, doneT, startT } from "../actions/task.action";
+// Import necessary components
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 
+// Main App component
 const App = () => {
+  // State variables
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState([]);
-
   const [newTask, setNewTask] = useState({
     name: "",
     category: "",
-    status: "", // Set default status
+    status: "", 
     deadline: "",
     priority: "Standard",
     note: ""
   });
+  // Hook to navigate to different pages
   const navigate = useNavigate();
-
+  // Effect hook to fetch data
   useEffect(() => {
     const fetchInitial = async () => {
       try {
@@ -37,17 +42,18 @@ const App = () => {
     fetchInitial();
   }, []);
 
+  // Function to fetch tasks
   const handleFetchTasks = async () => {
     try {
-      const loggedInUser = localStorage.getItem("username"); // Retrieve username from local storage
-      const taskData = await getTask(loggedInUser); // Fetch tasks specific to the logged-in user
+      const loggedInUser = localStorage.getItem("username");
+      const taskData = await getTask(loggedInUser); 
       setTasks(taskData);
       handleDeadline(taskData, loggedInUser);
     } catch (error) {
       console.error("Error Getting Task", error);
     }
   };
-
+  // Function to add a task
   const handleAddTask = async () => {
     try {
       const username = localStorage.getItem("username");
@@ -57,7 +63,7 @@ const App = () => {
       setNewTask({
         name: "",
         category: "",
-        status: "", // Reset status to default after adding task
+        status: "", 
         deadline: "",
         priority: "Standard",
         note: ""
@@ -66,7 +72,7 @@ const App = () => {
       console.error("Error adding task:", error);
     }
   };
-
+  // Function to delete a task
   const handleDeleteTask = async (taskName) => {
     try {
       await delTask({ name: taskName });
@@ -74,7 +80,7 @@ const App = () => {
       setNewTask({
         name: "",
         category: "",
-        status: "", // Reset status to default after adding task
+        status: "", 
         deadline: "",
         priority: "Standard",
         note: ""
@@ -83,7 +89,7 @@ const App = () => {
       console.error("Error deleting task:", error);
     }
   };
-
+  // Function to update a task
   const handleDoneTask = async (taskName) => {
     try {
       const username = localStorage.getItem("username");
@@ -96,7 +102,7 @@ const App = () => {
       console.error("Error Finishing Task", error);
     }
   };
-
+  // Function to start a task
   const handlestartTask = async(taskName) => {
     try {
       const username = localStorage.getItem("username");
@@ -107,29 +113,29 @@ const App = () => {
 
     }
   }
-
+  // Function to reload the page
   const Reload = () => {
     window.location.reload();
   };
-
+ // Function to add a task and reload the page
   const AddthenReload = async () => {
     await handleAddTask();
     Reload();
   };
-
+  // Function to navigate to the home page
   const HandlebackHome = () => {
     navigate("/Home");
   };
-
+  // Function to navigate to the notes page
   const HandleNotes = () => {
     navigate("/NoteHome");
   };
-
+  // Function to delete a task and reload the page
   const DelthenReload = async (taskName) => {
     await handleDeleteTask(taskName);
     await handleFetchTasks();
   };
-
+  // Function to hanlde the deadline of a task
   const handleDeadline = async (taskData, username) => {
     const today = new Date();
     taskData.forEach(async (task) => {
@@ -139,9 +145,9 @@ const App = () => {
       }
     });
   };
-
+  // Get the current date
   const today = new Date().toLocaleDateString();
-
+  // Render the app
   return (
     <div style={styles.app}>
       <Navbar style={styles.navbar} />
@@ -211,7 +217,7 @@ const App = () => {
             style={styles.input}
             fullWidth
           />
-         <Select // Use Select for dropdown menu
+         <Select 
   value={newTask.category}
   onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
   style={styles.input}
@@ -220,7 +226,7 @@ const App = () => {
   <MenuItem value="Study">Study</MenuItem>
   <MenuItem value="Other">Other</MenuItem>
 </Select>
-          <Select // Use Select for dropdown menu
+          <Select 
             label="Status"
             value={newTask.status}
             onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
@@ -238,7 +244,7 @@ const App = () => {
             style={styles.input}
             fullWidth
           />
-          <Select // Use Select for dropdown menu
+          <Select 
            
            label="Priority"
            value={newTask.priority}
@@ -267,7 +273,7 @@ const App = () => {
    </div>
  );
 };
-
+// Styling for the app
 const styles = {
   app: {
     fontFamily: "Arial, sans-serif",
@@ -277,25 +283,25 @@ const styles = {
     width: "100vw",
     margin: "0",
     padding: "0",
-    overflow: "hidden", // Ensure the whole app doesn't overflow
+    overflow: "hidden", 
   },
   navbar: {
-    height: "40px", // Adjusted height to make the navbar smaller
+    height: "40px", 
   },
   container: {
     display: "flex",
     flexDirection: "row",
     flex: "1",
     padding: "2rem",
-    overflow: "hidden", // Ensure the container doesn't overflow
+    overflow: "hidden", 
   },
   taskContainer: {
     flex: "2",
     padding: "1rem",
-    overflowY: "auto", // Allow vertical scrolling
+    overflowY: "auto", 
     borderRight: "1px solid #ccc",
-    marginTop: "50px", // Adjusted margin to push the container below the navbar
-    height: "calc(100% - 50px)", // Adjusted height to utilize remaining space
+    marginTop: "50px", 
+    height: "calc(100% - 50px)", 
   },
   taskCard: {
     border: "1px solid #ccc",
@@ -327,7 +333,7 @@ const styles = {
     flex: "1",
     padding: "1rem",
     paddingTop: "4rem",
-    overflowY: "auto", // Allow vertical scrolling
+    overflowY: "auto", 
     height: "100%",
   },
   input: {

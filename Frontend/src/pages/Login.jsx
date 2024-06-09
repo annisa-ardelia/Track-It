@@ -1,21 +1,24 @@
+// Import necessary modules
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../actions/user.action";
 import { Card, CardContent, Typography, TextField, Button } from "@mui/material";
 
+//login component
 const Login = () => {
+    // Declare necessary states
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
+    // Handle login
     const handleLogin = async (e) => {
         e.preventDefault();
         const response = await login(username, password);
         if (response.success) {
             alert("Login successful!");
             localStorage.setItem("username", username);
-            //username localstorage == username input
-            navigate("/home"); // Redirect to Home page
+            navigate("/home"); 
         } else {
             alert("Login failed!");
         }

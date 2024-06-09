@@ -1,10 +1,13 @@
+// Importing necessary libraries and tools
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Grid, Paper, Box } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import NavbarNote from '../components/NavbarNote';
 import { addNote } from '../actions/note.action';
 
+// NoteMakingPage component
 const NoteMakingPage = () => {
+  // State variables to store note name, note text, error, time, timer minutes, timer seconds, and timer running
   const [name, setName] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState(null);
@@ -14,11 +17,13 @@ const NoteMakingPage = () => {
   const [timerRunning, setTimerRunning] = useState(false);
   const navigate = useNavigate();
 
+  // UseEffect to update time every second
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
+  // UseEffect to handle the countdown timer
   useEffect(() => {
     let timerInterval;
     if (timerRunning && (timerMinutes > 0 || timerSeconds > 0)) {
@@ -36,6 +41,7 @@ const NoteMakingPage = () => {
     return () => clearInterval(timerInterval);
   }, [timerRunning, timerMinutes, timerSeconds]);
 
+  // Handle add note
   const handleAddNote = async () => {
     try {
       const username = localStorage.getItem('username');
@@ -50,19 +56,20 @@ const NoteMakingPage = () => {
       setError('Error adding note');
     }
   };
-
+  
+  // Start timer
   const startTimer = () => {
     if (timerMinutes > 0 || timerSeconds > 0) {
       setTimerRunning(true);
     }
   };
-
+  // Stop timer
   const stopTimer = () => {
     setTimerRunning(false);
     setTimerMinutes(0);
     setTimerSeconds(0);
   };
-
+  // Handle timer change
   const handleTimerChange = (e) => {
     const { name, value } = e.target;
     if (name === 'minutes') {
@@ -159,7 +166,7 @@ content: {
 flex: 1,
 padding: '20px',
 overflowY: 'auto',
-marginTop: '64px', // Adjust this if the AppBar height is different
+marginTop: '64px',
 },
 gridContainer: {
 height: '100%',

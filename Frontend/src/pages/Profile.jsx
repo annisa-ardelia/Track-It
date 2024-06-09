@@ -1,15 +1,17 @@
+// Import necessary modules
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Avatar } from '@mui/material';
 import { profile } from "../actions/user.action";
 import userImageMapping from "../images/user.images";
 import Navbar from "../components/Navbar";
 
-
+// Profile component
 const Profile = () => {
+    // Set necessary states
     const [user, setUser] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+    // Fetch user data from backend
     useEffect(() => {
         const fetchAvatar = async () => {
             const username = localStorage.getItem("username");
@@ -25,15 +27,15 @@ const Profile = () => {
         
             fetchAvatar();
         }, []);
-
+        // If loading, display "Loading..."
         if (loading) {
             return <div>Loading...</div>;
         }
-    
+        // If error, display error message
         if (error) {
             return <div>{error}</div>;
         }
-
+    // Return the profile page
     return (
         <div>
         <Navbar/>
@@ -62,7 +64,7 @@ const Profile = () => {
     );
 };
 
-
+// Styles for the Profile
 const styles ={
     Profiletext: {
         textAlign: 'center',

@@ -1,5 +1,7 @@
+//Import Necessary modules 
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+//Import Pages for Routing
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Task from "./pages/Task";
@@ -9,8 +11,10 @@ import Pet from "./pages/Pet";
 import Profile from "./pages/Profile";
 import NoteWrite from "./pages/NoteWrite";
 
+// Main App Component for Routing
 function App() {
   return (
+    // Wrap the Routes in Router to enable Routing
     <Router>
       <div className='grid grid-cols-1 justify-content-center'>
         <div className='flex items-center justify-center'>
@@ -30,5 +34,5 @@ function App() {
     </Router>
   );
 }
-
+// Export the App Component
 export default App;

@@ -1,11 +1,24 @@
+// Import the pool instance from the database configuration file
 const { pool } = require("../config/db.config.js");
+
+// Import the uuid library for generating unique identifiers (not used in this code, but included for other parts of your application)
 const { v4: uuidv4 } = require('uuid');
 
-//Get user's owned pets
-exports.getOwnedPets = async function (req, res){
+/**
+ * Get user's owned pets.
+ * 
+ * This function handles an HTTP GET request to retrieve all pets owned by a specific user.
+ * It sends the retrieved data as a JSON response. If no pets are found, it returns a 404 status code with an error message.
+ * If an error occurs during the database query, it logs the error and returns a 500 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getOwnedPets = async function (req, res) {
     const { username } = req.body;
 
     try {
+        // Retrieve all pets owned by the specified user
         const result = await pool.query(
             `SELECT po.username, p.name, p.pet_avatar
             FROM pet_owner po
@@ -14,21 +27,30 @@ exports.getOwnedPets = async function (req, res){
             [username]
         );
 
+        // Check if any pets are found
         if (result.rows.length === 0) {
             res.status(404).send("You don't have any pet yet");
         } else {
             res.send(result.rows);
         }
     } catch (error) {
-        res.status(500).send({
-            err: error.message,
-        });
+        // Log the error and send a 500 status code with an error message
+        res.status(500).send({ err: error.message });
     }
 };
 
-//Updating user's owned pet
-exports.UpdateOwnedPet = async function (req, res){
-    // Extract username from request body
+/**
+ * Update user's owned pets based on their level.
+ * 
+ * This function handles an HTTP POST request to update the pets owned by a user based on their level.
+ * It first deletes all existing entries for the user in the 'pet_owner' table, then inserts new entries
+ * for the pets that the user qualifies to own based on their level. It returns a 200 status code with
+ * the details of the inserted records, or an error message if an error occurs.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.UpdateOwnedPet = async function (req, res) {
     const { username } = req.body;
 
     // Log the request body for debugging
@@ -43,7 +65,7 @@ exports.UpdateOwnedPet = async function (req, res){
         // Fetch the user's level
         const getLevResult = await pool.query('SELECT level FROM user_database WHERE username = $1', [username]);
 
-        // Check if the user exists and log the result
+        // Check if the user exists
         if (getLevResult.rows.length === 0) {
             return res.status(404).send({ err: "User not found" });
         }
@@ -87,38 +109,58 @@ exports.UpdateOwnedPet = async function (req, res){
     }
 };
 
-//Get user's not owned pet
-exports.getAllPets = async function (req, res) { 
+/**
+ * Get user's not owned pets.
+ * 
+ * This function handles an HTTP GET request to retrieve all pets that the user does not own.
+ * It sends the retrieved data as a JSON response. If no pets are found, it returns a 404 status code with an error message.
+ * If an error occurs during the database query, it logs the error and returns a 500 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getAllPets = async function (req, res) {
     const { username } = req.body;
 
-    try { 
-        const result = await pool.query( 
+    try {
+        // Retrieve all pets that the user does not own
+        const result = await pool.query(
             `SELECT p.id, p.name, p.pet_avatar
             FROM pet p
             LEFT JOIN pet_owner po ON p.id = po.pet_id AND po.username = $1
             WHERE po.username IS NULL
             ORDER BY p.name ASC;`,
             [username]
-        ); 
+        );
 
-        if (result.rows.length === 0) { 
-            res.status(404).send("No pets found"); 
-        } else { 
-            res.send(result.rows); 
-        } 
-    } catch (error) { 
-        res.status(500).send({ 
-            err: error.message, 
-        }); 
-    } 
+        // Check if any pets are found
+        if (result.rows.length === 0) {
+            res.status(404).send("No pets found");
+        } else {
+            res.send(result.rows);
+        }
+    } catch (error) {
+        // Log the error and send a 500 status code with an error message
+        res.status(500).send({ err: error.message });
+    }
 };
 
-//Get user's newest pet
-exports.getMyNewestPet = async function (req, res) { 
+/**
+ * Get user's newest pet.
+ * 
+ * This function handles an HTTP GET request to retrieve the user's newest pet.
+ * It sends the retrieved data as a JSON response. If no pets are found, it returns a 404 status code with an error message.
+ * If an error occurs during the database query, it logs the error and returns a 500 status code with an error message.
+ * 
+ * @param {object} req - The request object
+ * @param {object} res - The response object
+ */
+exports.getMyNewestPet = async function (req, res) {
     const { username } = req.body;
 
-    try { 
-        const result = await pool.query( 
+    try {
+        // Retrieve the user's newest pet
+        const result = await pool.query(
             `SELECT po.username, p.name, p.pet_avatar, p.minimum_level
             FROM pet_owner po
             JOIN pet p ON po.pet_id = p.id
@@ -126,17 +168,16 @@ exports.getMyNewestPet = async function (req, res) {
             ORDER BY po.ctid DESC
             LIMIT 1;`,
             [username]
-        ); 
+        );
 
-        if (result.rows.length === 0) { 
-            res.status(404).send("No pets found"); 
-        } else { 
-            res.send(result.rows); 
-        } 
-    } catch (error) { 
-        res.status(500).send({ 
-            err: error.message, 
-        }); 
-    } 
-    
+        // Check if any pets are found
+        if (result.rows.length === 0) {
+            res.status(404).send("No pets found");
+        } else {
+            res.send(result.rows);
+        }
+    } catch (error) {
+        // Log the error and send a 500 status code with an error message
+        res.status(500).send({ err: error.message });
+    }
 };
