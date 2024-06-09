@@ -154,7 +154,7 @@ exports.getLevel = async function (req, res){
         if (Point.rows.length === 0) {
             return res.status(404).json({ error: "Username don't exist not found"});
         }
-        res.json(result.rows[0].level);
+        res.json(Point.rows[0].level);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error retrieving point' });

@@ -24,7 +24,7 @@ export const addNote = async (name, username, text) => {
 export const getNote = async (username) => {
   try {
     const res = await axios.post('http://localhost:5413/note/getN', { username: username });
-    return baseApiResponse(res.data, true);
+    return res.data;
   } catch (error) {
     console.error('Error fetching notes:', error);
     throw error;

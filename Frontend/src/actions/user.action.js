@@ -66,9 +66,9 @@ export const incrementLevel = async (username) => {
   }
 }
 
-export const updatePoint = async (username, point) => {
+export const updatePoint = async (username) => {
   try {
-    const response = await axios.post('http://localhost:5413/user/updatePoint', { username: username, point: point });
+    const response = await axios.post('http://localhost:5413/user/updatePoint', { username: username});
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error('Error updating points:', error);

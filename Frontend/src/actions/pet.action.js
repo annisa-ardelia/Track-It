@@ -43,3 +43,15 @@ export const myNewestPet = async (username) => {
         return baseApiResponse(null, false);
     }
 };
+
+export const UpdateOwnedPet = async (username) => {
+    try {
+        const response = await axios.post(`http://localhost:5413/pet/updateOwned`, {
+            username: username
+        });
+        return baseApiResponse(response.data, true);
+    } catch (error) {
+        console.error(error);
+        return baseApiResponse(null, false);
+    }
+}

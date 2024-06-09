@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
-import { getNick, getLevel } from "../actions/user.action";
+import { profile } from "../actions/user.action";
 import { getTask } from "../actions/task.action";
 import { getNote } from "../actions/note.action";
 import { myNewestPet } from "../actions/pet.action";
@@ -10,8 +10,7 @@ import { Button, Card, CardContent, Typography } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
-  const [level, setLevel] = useState([]);
-  const [nickname, setNickname] = useState("");
+  const [user, setUser] = useState("");
   const [newestPet, setNewestPet] = useState([]);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,19 +25,13 @@ const App = () => {
         const taskData = await getTask(username);
         setTasks(taskData);
 
-        const levelData = await getLevel(username);
-        setLevel(levelData.level);
-
-        const nicknameData = await getNick(username);
-        setNickname(nicknameData.nickname);
+        const userRes = await profile(username);
+        setUser(userRes.data);
 
         const petResponse = await myNewestPet(username);
         if (petResponse.success) {
           setNewestPet(petResponse.data);
-        } else {
-          setError("Failed to fetch my newest pet");
         }
-
         const noteResponse = await getNote(username);
         setNotes(noteResponse);
 
@@ -80,7 +73,7 @@ const App = () => {
           <Card style={{ ...styles.card, ...styles.taskCard }}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>
-                Tasks for {level}
+                Tasks for {user.nickname}
               </Typography>
               {tasks.length > 0 ? (
                 <div>

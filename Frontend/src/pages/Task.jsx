@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { UpdateOwnedPet } from "../actions/pet.action";
+import { updatePoint, incrementLevel } from "../actions/user.action";
 import { getTask, addTask, delTask, updateT, doneT, startT } from "../actions/task.action";
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 
@@ -81,6 +83,9 @@ const App = () => {
     try {
       const username = localStorage.getItem("username");
       await doneT(username, taskName);
+      await updatePoint(username);
+      await incrementLevel(username);
+      await UpdateOwnedPet(username);
       await handleFetchTasks();
     } catch (error) {
       console.error("Error Finishing Task", error);
@@ -175,6 +180,7 @@ const App = () => {
                     Notes
                   </Button>
                 )}
+                {task.status !== "Done" && task.status !== "Overdue" && (
                 <Button
                   variant="contained"
                   color="success"
@@ -183,6 +189,8 @@ const App = () => {
                 >
                   Done
                 </Button>
+                )}
+                {task.status === "Completed" && (
                 <Button
                   variant="contained"
                   color="inherit"
@@ -191,6 +199,7 @@ const App = () => {
                 >
                   Start
                 </Button>
+                )}
               </div>
             ))
           )}
