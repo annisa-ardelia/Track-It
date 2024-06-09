@@ -4,6 +4,7 @@
   <a href="![TrackIt](https://github.com/SistemBasisData2024/Track-It/assets/119683308/fef7f32b-f0d8-499e-b54e-fbeb1e2ad4b7)">
     <img src="https://github.com/SistemBasisData2024/Track-It/assets/119683308/02c744f3-c468-43cc-b14d-bae3430cce0e" alt="TrackIt" width="400">
 </div>
+
 Track It! merupakan sebuah proyek yang mengimplementasikan manajemen task atau to-do list yang interaktif dan seru. Website ini membawa unsur permainan ke dalam aktivitas harian dengan memungkinkan user untuk memiliki pet yang didapat dari kenaikan level setiap kali menyelesaikan task. Proyek ini dibagi menjadi tiga komponen penting yaitu user, pet, dan task.
 
 - **User:** Bertanggung jawab dalam membuat dan menyelesaikan task. User menggunakan Track It! dengan cara membuat akun, menambahkan task, dan menandai task sebagai 'Done' ketika selesai.
@@ -80,7 +81,32 @@ npm run start
 ```
 
 # Web Overview
-
+**Log in page**
+![Screenshot 2024-06-09 232717](https://github.com/SistemBasisData2024/Track-It/assets/76396936/86e9d97f-6cc7-4eb5-b4d0-e0d5fac9eeb0)
+<br />
+<br />
+**Sign up page**
+![Screenshot 2024-06-09 232731](https://github.com/SistemBasisData2024/Track-It/assets/76396936/78c2e731-8308-4518-b55f-9db1684afccb)
+<br />
+<br />
+**Home page**
+![Screenshot 2024-06-09 232759](https://github.com/SistemBasisData2024/Track-It/assets/76396936/a15f13ce-a829-46fb-bc87-4ba8f71e40be)
+<br />
+<br />
+**My tasks page**
+![Screenshot 2024-06-09 232815](https://github.com/SistemBasisData2024/Track-It/assets/76396936/31fca403-735e-4780-b8c8-b8a1e8bebc59)
+<br />
+<br />
+**My pets page**
+![Screenshot 2024-06-09 232911](https://github.com/SistemBasisData2024/Track-It/assets/76396936/b95e404b-5c0f-430e-8678-7ea5938a617b)
+<br />
+<br />
+**My notes page**
+![Screenshot 2024-06-09 232922](https://github.com/SistemBasisData2024/Track-It/assets/76396936/562fb2d6-12a4-4442-81fa-863e70591b82)
+<br />
+<br />
+**Profile page**
+![Screenshot 2024-06-09 232936](https://github.com/SistemBasisData2024/Track-It/assets/76396936/8400111a-0864-4ad1-88f8-78b34ec15eb1)
 
 # Progress Report
 ![Progress-Report](https://github.com/SistemBasisData2024/Track-It/assets/119683308/fd980081-47bd-4686-b98d-3fc8b81473e9)
